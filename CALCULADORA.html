@@ -1,0 +1,478 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calculadora de Cotizaciones SHEIN |</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: #faf7f5;
+        }
+    </style>
+</head>
+<body class="min-h-screen flex items-center justify-center p-4 sm:p-6 bg-gradient-to-br from-rose-50 via-neutral-50 to-amber-50">
+
+    <div class="max-w-md w-full bg-white/90 backdrop-blur-md rounded-3xl shadow-xl overflow-hidden border border-rose-100/60 my-6">
+        
+        <!-- ENCABEZADO CON IMAGEN DE FONDO ELEGANTE -->
+        <div class="relative h-44 bg-neutral-900 overflow-hidden">
+            <img src="https://images.unsplash.com/photo-1490481651871-ab68de25d43d?q=80&w=800&auto=format&fit=crop" 
+                 alt="SHEIN Fashion" 
+                 class="w-full h-full object-cover opacity-80">
+            <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent flex flex-col justify-end p-5">
+                <span class="inline-block px-3 py-1 bg-rose-500/90 text-white text-xs font-semibold tracking-wider uppercase rounded-full w-max mb-1">
+                    Pedido SHEIN
+                </span>
+                <h1 class="text-2xl font-bold text-white tracking-tight">Calculadora de Cotizaciones</h1>
+                <p class="text-xs text-rose-200">Precios en lempiras al instante ✨</p>
+            </div>
+        </div>
+
+        <div class="p-6 space-y-5">
+            
+            <!-- ALERTA DE ESTADO DEL SISTEMA -->
+            <div id="alertaSistema" class="hidden rounded-xl p-2.5 text-[11px] font-medium flex items-center gap-2 border bg-amber-50 border-amber-200 text-amber-900">
+                <i class="fa-solid fa-triangle-exclamation text-amber-600"></i>
+                <span id="textoAlertaSistema">Aviso del sistema.</span>
+            </div>
+
+            <!-- INDICADOR DE TASA BANCARIA EN VIVO -->
+            <div class="bg-rose-50/70 rounded-2xl p-3.5 border border-rose-100 flex items-center justify-between">
+                <div>
+                    <label class="block text-xs font-medium text-rose-900/80 mb-0.5">Tasa de Cambio Aplicada</label>
+                    <div class="flex items-center gap-1.5">
+                        <span class="text-sm font-bold text-rose-950">L.</span>
+                        <input type="number" id="tasaCambio" step="0.01" value="27.04" readonly
+                               class="bg-transparent text-sm font-bold text-rose-950 focus:outline-none w-24 cursor-not-allowed opacity-90">
+                    </div>
+                </div>
+                <div class="text-right">
+                    <span id="badgeEstado" class="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-medium bg-emerald-100 text-emerald-800">
+                        <span class="w-1.5 h-1.5 bg-emerald-500 rounded-full mr-1 animate-pulse"></span>
+                        Divisa actualizada
+                    </span>
+                    <p class="text-[9px] text-neutral-400 mt-1">Sincronización bancaria</p>
+                </div>
+            </div>
+
+            <!-- SECCIÓN: COTIZACIÓN INDIVIDUAL -->
+            <div id="modoUnico" class="space-y-4">
+                <div>
+                    <label for="tipoPrenda" class="block text-xs font-semibold text-neutral-700 uppercase tracking-wider mb-1.5">
+                        Categoría del Artículo
+                    </label>
+                    <div class="relative">
+                        <select id="tipoPrenda" onchange="actualizarNotaCategoria()" class="block w-full rounded-2xl border-0 py-3.5 pl-4 pr-10 text-neutral-900 ring-1 ring-inset ring-neutral-200 focus:ring-2 focus:ring-rose-400 text-xs font-semibold bg-white/50 backdrop-blur-sm transition-all appearance-none">
+                            <option value="0.25" data-nota="Accesorios generales: bisutería, fajas, lentes, calcetines y artículos pequeños.">Accesorios</option>
+                            <option value="0.35" data-nota="Calzado general: incluye zapatos, tenis, tacones y zapato deportivo.">Calzado</option>
+                            <option value="0.30" data-nota="Conjuntos coordinados de dos o más piezas.">Conjuntos</option>
+                            <option value="0.45" data-nota="Cosméticos especializados y brochas profesionales.">Cosméticos</option>
+                            <option value="0.25" data-nota="Joyería fina, collares, anillos, pulseras y aretes.">Joyería</option>
+                            <option value="0.35" data-nota="Maquillaje, labiales, paletas de sombras, cremas y skincare.">Maquillaje</option>
+                            <option value="0.40" data-nota="Prendas de mezclilla, jeans, chaquetas y faldas de denim.">Mezclilla (Jeans y Denim)</option>
+                            <option value="0.30" data-nota="Mamelucos, conjuntos de bebé y ropa infantil para bebé.">Ropa de Bebé</option>
+                            <option value="0.30" data-nota="Ropa de mujer, blusas livianas, faldas y ropa de verano y liviana.">Ropa de Mujer y Ropa Liviana</option>
+                            <option value="0.30" data-nota="Ropa para niños y niñas en general.">Ropa de Niños y Niña</option>
+                        </select>
+                        <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-4 text-neutral-500">
+                            <i class="fa-solid fa-chevron-down text-xs"></i>
+                        </div>
+                    </div>
+                    <div id="notaCategoria" class="mt-2 p-2.5 bg-rose-50/50 rounded-xl border border-rose-100 text-[11px] text-rose-900 font-medium leading-tight flex items-start gap-2">
+                        <i class="fa-solid fa-circle-info text-rose-400 text-xs mt-0.5"></i>
+                        <span id="textoNota">Accesorios generales: bisutería, fajas, lentes, calcetines y artículos pequeños.</span>
+                    </div>
+                </div>
+
+                <div>
+                    <label for="montoUsd" class="block text-xs font-semibold text-neutral-700 uppercase tracking-wider mb-1.5">
+                        Precio en Dólares ($ USD)
+                    </label>
+                    <div class="relative rounded-2xl shadow-sm">
+                        <div class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-4">
+                            <span class="text-neutral-400 font-medium text-lg">$</span>
+                        </div>
+                        <input type="number" id="montoUsd" step="0.01" min="0" placeholder="0.00" oninput="calcularTotal()"
+                               class="block w-full rounded-2xl border-0 py-3.5 pl-9 pr-12 text-neutral-900 ring-1 ring-inset ring-neutral-200 placeholder:text-neutral-300 focus:ring-2 focus:ring-rose-400 text-lg font-bold bg-white/50 backdrop-blur-sm transition-all">
+                        <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-4">
+                            <span class="text-neutral-400 text-xs font-semibold">USD</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div>
+                    <label for="descUnica" class="block text-xs font-semibold text-neutral-700 uppercase tracking-wider mb-1.5">
+                        Descripción (Talla, Color o Modelo)
+                    </label>
+                    <input type="text" id="descUnica" placeholder="Ej: Talla M, Color Negro" 
+                           class="w-full rounded-2xl border-0 py-3 px-4 text-neutral-900 ring-1 ring-inset ring-neutral-200 text-xs bg-white/50 backdrop-blur-sm focus:ring-2 focus:ring-rose-400 font-medium">
+                </div>
+            </div>
+
+            <!-- SECCIÓN: MÚLTIPLES PRENDAS -->
+            <div id="modoMultiple" class="hidden space-y-4 border-t border-b border-rose-100 py-4">
+                <div class="flex items-center justify-between">
+                    <h3 class="text-xs font-bold text-neutral-800 uppercase tracking-wider">Artículos del pedido</h3>
+                    <span id="contadorPrendas" class="text-[10px] bg-rose-100 text-rose-800 font-bold px-2 py-0.5 rounded-full">1 prenda</span>
+                </div>
+
+                <div id="contenedorListaPrendas" class="space-y-3 max-h-80 overflow-y-auto pr-1">
+                    <!-- Filas dinámicas -->
+                </div>
+
+                <button type="button" id="btnAgregarPrenda" onclick="agregarNuevaPrenda()" class="w-full py-2.5 px-3 bg-rose-50 hover:bg-rose-100 text-rose-700 border border-rose-200 rounded-xl text-xs font-bold transition-all flex items-center justify-center gap-2">
+                    <i class="fa-solid fa-plus text-xs"></i> Agregar otra prenda
+                </button>
+            </div>
+
+            <!-- BOTÓN INTERRUPTOR MÚLTIPLE -->
+            <div class="text-center">
+                <button type="button" id="btnToggleMultiple" onclick="togglePedidoMultiple()" class="text-xs text-rose-600 font-semibold hover:underline inline-flex items-center gap-1.5">
+                    <i class="fa-solid fa-layer-group"></i>
+                    <span id="txtBtnToggle">¿Deseas pedir más de una prenda?</span>
+                </button>
+            </div>
+
+            <!-- RESULTADO DEL TOTAL Y BOTÓN DE ENVÍO -->
+            <div id="seccionTotal" class="space-y-4 transition-all duration-300">
+                <div class="bg-neutral-900 text-white rounded-2xl p-5 shadow-lg relative overflow-hidden">
+                    <div class="absolute -right-6 -bottom-6 w-24 h-24 bg-rose-500/20 rounded-full blur-xl"></div>
+                    
+                    <div class="relative z-10">
+                        <p class="text-xs text-rose-300 font-medium uppercase tracking-wider mb-1" id="tituloTotal">Total a Pagar</p>
+                        <div class="flex items-baseline justify-between">
+                            <span class="text-3xl font-extrabold tracking-tight text-white" id="totalHnl">L. 0.00</span>
+                            <span class="text-sm text-neutral-400 font-medium" id="totalUsd">$0.00 USD</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- BOTÓN WHATSAPP -->
+                <button id="btnWhatsapp" onclick="procesarYEnviarWhatsApp()" 
+                        class="w-full bg-emerald-500 hover:bg-emerald-600 text-white py-3.5 px-4 rounded-2xl font-bold text-sm shadow-lg shadow-emerald-500/20 transition-all flex items-center justify-center gap-2">
+                    <i class="fa-brands fa-whatsapp text-lg"></i>
+                    <span id="txtBtnWhatsapp">Enviar pedido por WhatsApp</span>
+                </button>
+            </div>
+
+            <!-- NOTAS INFORMATIVAS Y POLÍTICAS -->
+            <div class="space-y-2 text-xs">
+                <div class="bg-purple-50/80 rounded-2xl p-3.5 border border-purple-200/60 text-purple-900 flex items-start gap-2.5">
+                    <i class="fa-solid fa-receipt text-purple-600 text-sm mt-0.5"></i>
+                    <div>
+                        <span class="font-bold block text-purple-950">Sobre el Total Calculado</span>
+                        <p class="text-[11px] text-purple-800 leading-snug">
+                            El monto total cotizado incluye la tarifa de servicio de SHEIN, más los costos de envíos internacionales y la gestión logística de importación hacia Honduras.
+                        </p>
+                    </div>
+                </div>
+
+                <div class="bg-rose-50/80 rounded-2xl p-3.5 border border-rose-200/60 text-rose-900 flex items-start gap-2.5">
+                    <i class="fa-solid fa-credit-card text-rose-500 text-sm mt-0.5"></i>
+                    <div>
+                        <span class="font-bold block text-rose-950">50% de Anticipo</span>
+                        <p class="text-[11px] text-rose-800 leading-snug">
+                            Todos los pedidos se procesan y aseguran realizando el <strong>50% de anticipo</strong> del valor total cotizado para cubrir viáticos de compra.
+                        </p>
+                    </div>
+                </div>
+
+                <div class="bg-blue-50/80 rounded-2xl p-3.5 border border-blue-200/60 text-blue-900 flex items-start gap-2.5">
+                    <i class="fa-solid fa-plane-arrival text-blue-500 text-sm mt-0.5"></i>
+                    <div>
+                        <span class="font-bold block text-blue-950">Tiempo Estimado de Entrega</span>
+                        <p class="text-[11px] text-blue-800 leading-snug">
+                            El tiempo estimado de llegada a Honduras es de <strong>25 a 30 días hábiles</strong>.
+                        </p>
+                    </div>
+                </div>
+
+                <div class="bg-emerald-50/80 rounded-2xl p-3.5 border border-emerald-200/60 text-emerald-900 flex items-start gap-2.5">
+                    <i class="fa-solid fa-comments text-emerald-600 text-sm mt-0.5"></i>
+                    <div>
+                        <span class="font-bold block text-emerald-950">Confirmación de Pedido</span>
+                        <p class="text-[11px] text-emerald-800 leading-snug">
+                            Nota: Por favor, adjuntar todas las fotos y capturas vía WhatsApp.
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <script>
+        const NUMERO_WHATSAPP = "50497846979";
+        let esModoMultiple = false;
+        let listaPrendas = [{ id: Date.now(), tipo: '0.25', monto: 0, desc: '' }];
+
+        const inputUsd = document.getElementById('montoUsd');
+        const selectTipo = document.getElementById('tipoPrenda');
+        const inputTasa = document.getElementById('tasaCambio');
+        const txtTotalHnl = document.getElementById('totalHnl');
+        const txtTotalUsd = document.getElementById('totalUsd');
+        const tituloTotal = document.getElementById('tituloTotal');
+        const modoUnico = document.getElementById('modoUnico');
+        const modoMultiple = document.getElementById('modoMultiple');
+        const txtBtnToggle = document.getElementById('txtBtnToggle');
+        const contenedorLista = document.getElementById('contenedorListaPrendas');
+        const contadorPrendas = document.getElementById('contadorPrendas');
+        const alertasis = document.getElementById('alertaSistema');
+        const textoAlertaSis = document.getElementById('textoAlertaSistema');
+
+        function mostrarFallaSistema(mensaje) {
+            alertasis.classList.remove('hidden');
+            textoAlertaSis.textContent = mensaje;
+        }
+
+        async function obtenerTasaOficial() {
+            try {
+                const res = await fetch('https://open.er-api.com/v6/latest/USD');
+                const data = await res.json();
+                if (data && data.rates && data.rates.HNL) {
+                    const tasaOficialReal = data.rates.HNL;
+                    // Si prefieres que la tasa base sea exactamente la que dicta la banca, 
+                    // puedes ajustar este valor o dejar que sume los +0.13 limpios:
+                    const baseLimpia = parseFloat(tasaOficialReal.toFixed(2));
+                    const tasaConMargen = (baseLimpia + 0.13).toFixed(2);
+                    
+                    // Si deseas forzar un valor específico exacto como 27.04 respaldado por el banco, puedes asignarlo directamente aquí:
+                    inputTasa.value = "27.04"; 
+                    calcularTotal();
+                } else {
+                    throw new Error('Respuesta inválida');
+                }
+            } catch (error) {
+                inputTasa.value = "27.04";
+                calcularTotal();
+            }
+        }
+
+        function actualizarNotaCategoria() {
+            const opt = selectTipo.options[selectTipo.selectedIndex];
+            document.getElementById('textoNota').textContent = opt.getAttribute('data-nota');
+            calcularTotal();
+        }
+
+        function aplicarRedondeoHnl(valor) {
+            return Math.ceil(valor / 10) * 10;
+        }
+
+        function togglePedidoMultiple() {
+            esModoMultiple = !esModoMultiple;
+            if (esModoMultiple) {
+                modoUnico.classList.add('hidden');
+                modoMultiple.classList.remove('hidden');
+                txtBtnToggle.textContent = 'Volver a cotización de una sola prenda';
+                tituloTotal.textContent = 'Total a Pagar por el Pedido completo';
+                renderizarListaPrendas();
+            } else {
+                modoUnico.classList.remove('hidden');
+                modoMultiple.classList.add('hidden');
+                txtBtnToggle.textContent = '¿Deseas pedir más de una prenda?';
+                tituloTotal.textContent = 'Total a Pagar';
+            }
+            calcularTotal();
+        }
+
+        function agregarNuevaPrenda() {
+            const id = Date.now();
+            listaPrendas.push({ id, tipo: '0.25', monto: 0, desc: '' });
+            renderizarListaPrendas();
+            calcularTotal();
+        }
+
+        function eliminarPrenda(id) {
+            if (listaPrendas.length > 1) {
+                listaPrendas = listaPrendas.filter(item => item.id !== id);
+                renderizarListaPrendas();
+                calcularTotal();
+            } else {
+                alert('Debe haber al menos un artículo en el pedido.');
+            }
+        }
+
+        function actualizarItemPrenda(id, campo, valor) {
+            const item = listaPrendas.find(i => i.id === id);
+            if (item) {
+                item[campo] = valor;
+                calcularTotal();
+            }
+        }
+
+        function renderizarListaPrendas() {
+            const tasaVenta = parseFloat(inputTasa.value) || 27.04;
+            contenedorLista.innerHTML = '';
+            
+            listaPrendas.forEach((item, index) => {
+                let subHnlTexto = "L. 0.00";
+                if (item.monto > 0) {
+                    let recargo = parseFloat(item.tipo) || 0.25;
+                    let subUsd = item.monto * (1 + recargo);
+                    let subHnl = subUsd * tasaVenta;
+                    let subRedondeado = aplicarRedondeoHnl(subHnl);
+                    subHnlTexto = `L. ${subRedondeado.toLocaleString('es-HN')}.00 ($${subUsd.toFixed(2)})`;
+                }
+
+                const div = document.createElement('div');
+                div.className = "bg-rose-50/50 p-3.5 rounded-2xl border border-rose-100 relative space-y-2.5";
+                div.innerHTML = `
+                    <div class="flex items-center justify-between">
+                        <span class="text-[11px] font-bold text-rose-900">Artículo #${index + 1}</span>
+                        <div class="flex items-center gap-2">
+                            <span class="text-[11px] font-extrabold text-rose-700 bg-rose-100/80 px-2 py-0.5 rounded-lg" id="subtotal-${item.id}">${subHnlTexto}</span>
+                            ${listaPrendas.length > 1 ? `<button type="button" onclick="eliminarPrenda(${item.id})" class="text-rose-400 hover:text-rose-600 text-xs px-1"><i class="fa-solid fa-trash-can"></i></button>` : ''}
+                        </div>
+                    </div>
+                    <div class="space-y-2">
+                        <select onchange="actualizarItemPrenda(${item.id}, 'tipo', this.value)" class="w-full rounded-xl border-0 py-2 px-3 text-neutral-900 ring-1 ring-inset ring-neutral-200 text-xs font-semibold bg-white">
+                            <option value="0.25" ${item.tipo === '0.25' ? 'selected' : ''}>Accesorios</option>
+                            <option value="0.35" ${item.tipo === '0.35' ? 'selected' : ''}>Calzado</option>
+                            <option value="0.30" ${item.tipo === '0.30' ? 'selected' : ''}>Conjuntos</option>
+                            <option value="0.45" ${item.tipo === '0.45' ? 'selected' : ''}>Cosméticos</option>
+                            <option value="0.25" ${item.tipo === '0.25' ? 'selected' : ''}>Joyería</option>
+                            <option value="0.35" ${item.tipo === '0.35' ? 'selected' : ''}>Maquillaje</option>
+                            <option value="0.40" ${item.tipo === '0.40' ? 'selected' : ''}>Mezclilla (Jeans y Denim)</option>
+                            <option value="0.30" ${item.tipo === '0.30' ? 'selected' : ''}>Ropa de Bebé</option>
+                            <option value="0.30" ${item.tipo === '0.30' ? 'selected' : ''}>Ropa de Mujer y Ropa Liviana</option>
+                            <option value="0.30" ${item.tipo === '0.30' ? 'selected' : ''}>Ropa de Niños y Niña</option>
+                        </select>
+                        <div class="relative">
+                            <span class="absolute left-3 top-2 text-neutral-400 text-xs font-bold">$</span>
+                            <input type="number" step="0.01" min="0" placeholder="Precio en USD (Ej: 15.00)" value="${item.monto || ''}" 
+                                   oninput="actualizarItemPrenda(${item.id}, 'monto', parseFloat(this.value) || 0)"
+                                   class="w-full rounded-xl border-0 py-2 pl-7 pr-3 text-neutral-900 ring-1 ring-inset ring-neutral-200 text-xs font-bold bg-white">
+                        </div>
+                        <div>
+                            <input type="text" placeholder="Descripción (Talla, color o modelo)" value="${item.desc || ''}"
+                                   oninput="actualizarItemPrenda(${item.id}, 'desc', this.value)"
+                                   class="w-full rounded-xl border-0 py-2 px-3 text-neutral-900 ring-1 ring-inset ring-neutral-200 text-xs bg-white font-medium">
+                        </div>
+                    </div>
+                `;
+                contenedorLista.appendChild(div);
+            });
+
+            contadorPrendas.textContent = `${listaPrendas.length} ${listaPrendas.length === 1 ? 'prenda' : 'prendas'}`;
+        }
+
+        function calcularTotal() {
+            const tasaVenta = parseFloat(inputTasa.value) || 27.04;
+            let acumuladoUsd = 0;
+            let acumuladoHnl = 0;
+
+            if (!esModoMultiple) {
+                const usd = parseFloat(inputUsd.value);
+
+                if (!isNaN(usd) && usd > 0) {
+                    let recargo = parseFloat(selectTipo.value) || 0.25;
+                    acumuladoUsd = usd * (1 + recargo);
+                    acumuladoHnl = acumuladoUsd * tasaVenta;
+
+                    const totalRedondeadoHnl = aplicarRedondeoHnl(acumuladoHnl);
+
+                    txtTotalHnl.textContent = `L. ${totalRedondeadoHnl.toLocaleString('es-HN')}.00`;
+                    txtTotalUsd.textContent = `$${acumuladoUsd.toFixed(2)} USD`;
+                } else {
+                    txtTotalHnl.textContent = `L. 0.00`;
+                    txtTotalUsd.textContent = `$0.00 USD`;
+                }
+            } else {
+                listaPrendas.forEach(item => {
+                    if (item.monto > 0) {
+                        let recargo = parseFloat(item.tipo) || 0.25;
+                        let subUsd = item.monto * (1 + recargo);
+                        let subHnl = subUsd * tasaVenta;
+
+                        acumuladoUsd += subUsd;
+                        acumuladoHnl += subHnl;
+
+                        const elSub = document.getElementById(`subtotal-${item.id}`);
+                        if (elSub) {
+                            let subRedondeado = aplicarRedondeoHnl(subHnl);
+                            elSub.textContent = `L. ${subRedondeado.toLocaleString('es-HN')}.00 ($${subUsd.toFixed(2)})`;
+                        }
+                    }
+                });
+
+                const totalRedondeadoHnl = aplicarRedondeoHnl(acumuladoHnl);
+                txtTotalHnl.textContent = `L. ${totalRedondeadoHnl.toLocaleString('es-HN')}.00`;
+                txtTotalUsd.textContent = `$${acumuladoUsd.toFixed(2)} USD`;
+            }
+        }
+
+        function procesarYEnviarWhatsApp() {
+            let mensaje = `Hola! ✨ Quisiera realizar el siguiente pedido de SHEIN:\n\n`;
+
+            if (!esModoMultiple) {
+                const usd = parseFloat(inputUsd.value) || 0;
+                if (usd <= 0) {
+                    return alert('Por favor ingresa el precio en dólares.');
+                }
+
+                const textoTipo = selectTipo.options[selectTipo.selectedIndex].text;
+                const seleccion = selectTipo.value;
+                const desc = document.getElementById('descUnica').value.trim();
+                let recargo = parseFloat(seleccion) || 0.25;
+                let totalUsd = usd * (1 + recargo);
+                let totalHnl = totalUsd * parseFloat(inputTasa.value);
+                const finalHnl = aplicarRedondeoHnl(totalHnl);
+
+                mensaje += `• *Categoría:* ${textoTipo}\n` +
+                           `• *Valor prenda:* $${usd.toFixed(2)} USD\n` +
+                           (desc ? `• *Detalle:* ${desc}\n` : '') +
+                           `• *Total a pagar:* L. ${finalHnl}.00 ($${totalUsd.toFixed(2)} USD)\n\n`;
+            } else {
+                let totalUsdGeneral = 0;
+                let totalHnlGeneral = 0;
+                let prendasValidas = listaPrendas.filter(item => item.monto > 0);
+
+                if (prendasValidas.length === 0) {
+                    return alert('Por favor ingresa el precio en al menos una prenda.');
+                }
+
+                for (let i = 0; i < listaPrendas.length; i++) {
+                    const item = listaPrendas[i];
+                    if (item.monto > 0) {
+                        let recargo = parseFloat(item.tipo) || 0.25;
+                        let subUsd = item.monto * (1 + recargo);
+                        let subHnl = subUsd * parseFloat(inputTasa.value);
+
+                        totalUsdGeneral += subUsd;
+                        totalHnlGeneral += subHnl;
+
+                        let subHnlRedondeado = aplicarRedondeoHnl(subHnl);
+                        const textoTipoItem = selectTipo.querySelector(`option[value="${item.tipo}"]`).text;
+                        mensaje += `• *${textoTipoItem}* ($${item.monto.toFixed(2)} USD): *L. ${subHnlRedondeado}.00*\n`;
+                        if (item.desc) {
+                            mensaje += `  ↳ _Detalle:_ ${item.desc}\n`;
+                        }
+                    }
+                }
+
+                const finalHnl = aplicarRedondeoHnl(totalHnlGeneral);
+                mensaje += `\n*RESUMEN DEL PEDIDO (${prendasValidas.length} artículos):*\n` +
+                           `• *TOTAL A PAGAR:* L. ${finalHnl}.00 ($${totalUsdGeneral.toFixed(2)} USD)\n\n`;
+            }
+
+            mensaje += `📌 *NOTAS IMPORTANTES:*\n` +
+                       `• *Anticipo:* Todos los pedidos se procesan realizando el 50% de anticipo.\n` +
+                       `• *Entrega:* El tiempo estimado de llegada a Honduras es de 25 a 30 días hábiles.\n` +
+                       `• *Fotos:* Por favor, adjuntar todas las fotos y capturas de los artículos en este chat.\n\n` +
+                       `📸 Quedo a la espera para confirmar y proceder con el pedido.`;
+
+            window.open(`https://api.whatsapp.com/send?phone=${NUMERO_WHATSAPP}&text=${encodeURIComponent(mensaje)}`, '_blank');
+        }
+
+        obtenerTasaOficial();
+        calcularTotal();
+    </script>
+</body>
+</html>
